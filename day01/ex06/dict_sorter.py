@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 def get_dict() -> dict:
     country_codes = {
         'Russia': '25',
@@ -21,15 +23,21 @@ def get_dict() -> dict:
         'Austria': '14',
         'Israel': '12'
     }
-    return  country_codes
+    return country_codes
 
 
 def sort_dict(country_codes: dict) -> dict:
     return dict(sorted(country_codes.items(), key=lambda item: (-int(item[1]), item[0])))
 
 
+def print_res(country_codes: dict) -> None:
+    for country in country_codes:
+        print(country)
+
+
 def main():
-    print_dict()
+    country_codes = sort_dict(get_dict())
+    print_res(country_codes)
 
 
 if __name__ == '__main__':
