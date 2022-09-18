@@ -9,19 +9,21 @@ def get_clients() -> set:
     return set(clients)
 
 
+# участники
 def get_participants() ->set:
     participants = ['walter@heisenberg.com', 'vasily@mail.ru', 'pinkman@yo.org', 'jessica@gmail.com',
                     'elon@paypal.com', 'pinkman@yo.org', 'mr@robot.gov', 'eleven@yahoo.com']
     return set(participants)
 
 
+# получатели рассылки
 def get_recipients() -> set:
     recipients = ['andrew@gmail.com', 'jessica@gmail.com', 'john@snow.is']
     return set(recipients)
 
 
-def call_center_request(clients: set, recipients: set) -> list:
-    return list(clients - recipients)
+def call_center_request(clients: set, recipients: set, participants: set) -> list:
+    return list((clients | participants) - recipients)
 
 
 def potential_clients_request(clients: set, participants: set) -> list:
@@ -38,7 +40,7 @@ def request_handler(name: str) -> None:
     recipients = get_recipients()
 
     if name == 'call_center':
-        print(call_center_request(clients, recipients))
+        print(call_center_request(clients, recipients, participants))
     elif name == 'potential_clients':
         print(potential_clients_request(clients, participants))
     elif name == 'loyalty_program':
