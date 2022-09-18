@@ -2,6 +2,7 @@
 
 import sys
 
+
 def get_dicts() -> tuple:
     COMPANIES = {
         'Apple': 'AAPL',
@@ -22,42 +23,66 @@ def get_dicts() -> tuple:
     return COMPANIES, STOCKS
 
 
-def is_company(raw: str, companies: dict) -> bool:
-    name = raw.lower().capitalize()
-    if name in companies:
-        print(name + ' stock price is ' + companies[name])
-        return True
-    return False
+def is_key(raw: str, dictionary: dict) -> tuple:
+    prepared = raw.lower()
+
+    for key in dictionary:
+        if prepared == key.lower():
+            return True, key
+    return False, ''
 
 
-def is_ticker(raw: str, stocks: dict) -> bool:
-    ticker = raw.upper()
-    if ticker in stocks:
-        print(ticker + ' is a ticker symbol for ' + str(stocks[ticker]))
-        return True
-    return False
+def process_request(raw_list: list) -> None:
+    companies, stocks = get_dicts()
+
+    if len(raw_list) == 0:
+        return
+
+    for value in raw_list:
+        res = is_key(value, companies)
+        if res[0]:
+            print(f'{ res[1] } stock price is { stocks[companies[res[1]]] }')
+            continue
+
+        res = is_key(value, stocks)
+        if res[0]:
+            print(f'{ res[1] } is a ticker symbol for ' +
+                  f'{ list(companies.keys())[list(companies.values()).index(res[1])] }')
+            continue
+
+        print(f'{ value } is an unknown company or an unknown ticker symbol')
+    return
 
 
-def split_input(input_string: str) -> list:
-    return input_string.replace(' ', '').split(',')
+def parse_args(arg: str, sep=',') -> list:
+    arg = arg.replace(' ', '')
+
+    arg_list = []
+    begin_index = 0
+    while begin_index < len(arg):
+        end_index = arg.find(sep, begin_index)
+        if end_index + 1 >= len(arg):  # trailing comma
+            return []
+
+        if end_index == -1:  # end of line
+            end_index = len(arg)
+
+        # empty value -> return empty list
+        if end_index - begin_index < 1:
+            return []
+
+        # push and go next
+        arg_list.append(arg[begin_index:end_index])
+        begin_index = end_index + 1
+
+        # return the result
+    return arg_list
 
 
 def main():
-    if len(sys.argv) != 2:
-        return
-    companies, stocks = get_dicts()
-    raw_list = split_input(sys.argv[1])
-    for raw_string in raw_list:
-        if raw_string == '' or raw_string == ' ':
-            return
-    for raw_string in raw_list:
-        if is_ticker(raw_string, stocks):
-            continue
-        elif is_company(raw_string, companies):
-            continue
-        else:
-            print(raw_string + ' is unknown company or an unknown ticker symbol')
-
+    if len(sys.argv) == 2:
+        raw_list = parse_args(sys.argv[1])
+        process_request(raw_list)
 
 
 if __name__ == '__main__':
