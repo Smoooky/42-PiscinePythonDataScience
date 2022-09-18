@@ -11,63 +11,42 @@ def write_file(filename: str, lines: list) -> None:
         file.writelines(lines)
 
 
-def get_csv_string_value(csv_line: str, begin_index: int, sep=',') -> str:
-    # check opening quote
-    if csv_line[begin_index] != '"':
+def get_csv_string_value(csv_line: str, begin_pos: int, sep=',') -> str:
+    if csv_line[begin_pos] != '"':
         raise ValueError("Can't get csv string value: the value is not a string")
-
-    # get closing quote
-    end_index = csv_line.find('"', begin_index + 1)
-    while end_index != -1:
-        if (end_index - begin_index > 1) and (csv_line[end_index - 1] == '\\'):  # escape quote
-            end_index = csv_line.find('"', end_index + 1)  # find next
+    end_pos = csv_line.find('"', begin_pos + 1)
+    while end_pos != -1:
+        if (end_pos - begin_pos > 1) and (csv_line[end_pos - 1] == '\\'):  # escape quote
+            end_pos = csv_line.find('"', end_pos + 1)  # find next
         else:
             break
-
-    if end_index == -1:
+    if end_pos == -1:
         raise RuntimeError("Syntax error: unclosed quote")
-
-    end_index += 1
-
-    # check separator
-    if (end_index + 1 != len(csv_line)) and (csv_line[end_index] != sep):
+    end_pos += 1
+    if (end_pos + 1 != len(csv_line)) and (csv_line[end_pos] != sep):
         raise RuntimeError("Syntax error: separator after quote is missing")
-
-    # return
-    return csv_line[begin_index:end_index]
+    return csv_line[begin_pos:end_pos]
 
 
-def get_csv_any_value(csv_line: str, begin_index: int, sep=',') -> str:
-    end_index = csv_line.find(sep, begin_index + 1)
-
-    if end_index == -1:
-        return csv_line[begin_index:]
-
-    return csv_line[begin_index:end_index]
+def get_csv_any_value(csv_line: str, begin_pos: int, sep=',') -> str:
+    end_pos = csv_line.find(sep, begin_pos + 1)
+    if end_pos == -1:
+        return csv_line[begin_pos:]
+    return csv_line[begin_pos:end_pos]
 
 
 def split_csv_line(csv_line: str, sep=',') -> list:
     splitted_line = []
-
-    # parse csv_line
-    begin_index = 0
-    while begin_index < len(csv_line):
-        if csv_line[begin_index] == sep:
-            begin_index += 1
-
-        # get end index of current field
-        if csv_line[begin_index] == '"':  # field is "string"
-            value = get_csv_string_value(csv_line, begin_index)
-        else:  # field is bool/number/whatever
-            value = get_csv_any_value(csv_line, begin_index)
-
-        # get current field
+    begin_pos = 0
+    while begin_pos < len(csv_line):
+        if csv_line[begin_pos] == sep:
+            begin_pos += 1
+        if csv_line[begin_pos] == '"':  # field is "string"
+            value = get_csv_string_value(csv_line, begin_pos)
+        else:
+            value = get_csv_any_value(csv_line, begin_pos)
         splitted_line.append(value)
-
-        # go next
-        begin_index += len(value)
-
-    # return the result
+        begin_pos += len(value)
     return splitted_line
 
 
