@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/python3
 
 def read_file(filename: str) -> list:
     with open(filename, 'r', encoding='utf-8') as file:
