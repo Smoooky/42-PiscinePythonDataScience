@@ -16,6 +16,7 @@ def get_offset(raw_offset: str) -> int:
         return int(raw_offset)
     except ValueError:
         print("Third argument must be integer")
+        return None
 
 
 def get_new_char(char: str, offset: int, is_encode: bool) -> str:
@@ -31,6 +32,8 @@ def get_new_char(char: str, offset: int, is_encode: bool) -> str:
 def encode(text: str, offset: int, is_encode: bool) -> str:
     res = ''
     for i in text:
+        if ord(i) >= 128:
+            raise RuntimeError("The script does not support your language yet.")
         if i.isupper():
             res += get_new_char(i.lower(), int(offset), is_encode).upper()
         else:
@@ -41,7 +44,8 @@ def encode(text: str, offset: int, is_encode: bool) -> str:
 def main():
     if len(sys.argv) == 4:
         offset = get_offset(sys.argv[3])
-        encode(sys.argv[2], offset, get_type(sys.argv[1]))
+        if offset is not None:
+            encode(sys.argv[2], offset, get_type(sys.argv[1]))
 
 
 if __name__ == '__main__':
