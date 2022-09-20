@@ -1,48 +1,25 @@
-import requests, sys, pytest
+from time import sleep
+import httpx, sys
 from bs4 import BeautifulSoup
 
 
-def test_parse_ticker():
-    res = parse('MSFT', 'Total Revenue')
-    assert res[0] == 'Total Revenue'
-
-
-def test_parse_tuple():
-    res = parse('MSFT', 'Total Revenue')
-    assert type(res) == tuple
-
-
-def test_parse_url():
-    try:
-        parse('MSweFT', 'Total Revenue')
-        assert False
-    except ConnectionError:
-        assert True
-
-
 def main(ticker, table):
-    test_parse_url()
-    test_parse_tuple()
-    test_parse_ticker()
     res = parse(ticker, table)
     if res:
         print(res)
 
 
 def parse(ticker, table):
-    ticker = ticker
-    table = table
+    # sleep(5)
     url = f'https://finance.yahoo.com/quote/{ticker}/financials?p={ticker}'
     try:
-        response = requests.get(url, headers={
+        response = httpx.get(url, headers={
             'User-Agent': 'Custom'})
-    except requests.exceptions.ConnectionError as e:
+    except httpx.exceptions.ConnectionError as e:
         print('Error: {}'.format(e))
         return None
     soup = BeautifulSoup(response.text, "html.parser")
     finance = soup.find_all('div', class_='fi-row')
-    if not finance:
-        raise ConnectionError
     tab = {}
     for elem in finance:
         try:
@@ -62,7 +39,6 @@ def parse(ticker, table):
 
 
 if __name__ == '__main__':
-
     try:
         if len(sys.argv) == 3:
             main(sys.argv[1], sys.argv[2])
