@@ -1,0 +1,13 @@
+Tue Sep 20 17:56:06 2022    pstats-cumulative.temp
+
+         705617 function calls (675588 primitive calls) in 1.286 seconds
+
+   Ordered by: cumulative time
+   List reduced from 2200 to 5 due to restriction <5>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+    292/1    0.005    0.000    1.286    1.286 {built-in method builtins.exec}
+        1    0.000    0.000    1.286    1.286 financial_enhanced.py:1(<module>)
+        1    0.000    0.000    0.984    0.984 financial_enhanced.py:6(main)
+        1    0.000    0.000    0.984    0.984 financial_enhanced.py:12(parse)
+        1    0.000    0.000    0.874    0.874 /Users/sstyr/PycharmProjects/42-PiscinePythonDataScience/day03/ex02/sstyr/lib/python3.9/site-packages/httpx/_api.py:167(get)
